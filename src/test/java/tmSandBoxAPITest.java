@@ -1,26 +1,26 @@
+import dataProviders.ConfigFileReader;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.junit.Test;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 
-/**
- * Test Class.
- */
 public class tmSandBoxAPITest {
+
+    private ConfigFileReader configFileReader;
 
     /**
      * Validating key values in API response.
      */
-    @Test    // Test for verifying values in response body
+    @Test(description= "To check api response from a url")
     public void carbonCredits() {
 
         // Specify base URI
-        RestAssured.baseURI =
-                "https://api.tmsandbox.co.nz/v1/Categories/6327/";
+        configFileReader= new ConfigFileReader();
+        RestAssured.baseURI = configFileReader.getbaseURI().trim();
 
         // Request object
         RequestSpecification httpsRequest = RestAssured.given();
@@ -38,14 +38,15 @@ public class tmSandBoxAPITest {
 
         // Verify Name value
         Assert.assertEquals(name, "Carbon credits");
-        System.out.println("Value of Name tag in response body is: " + name);
+        System.out.println("'Name' tag Expected value: Carbon credits.      Actual value: " + name);
+
 
         // Carbon Credit verification
         boolean canRelist = response.jsonPath().get("CanRelist");
 
         // Verify Name value
         Assert.assertEquals(canRelist, true);
-        System.out.println("canRelist tag Expected Value: true   Actual Value: "
+        System.out.println("'canRelist' tag Expected Value: true   Actual Value: "
                 + canRelist);
 
         int i = ((ArrayList<String>) (response.getBody().jsonPath().get("Promotions.Name")))
